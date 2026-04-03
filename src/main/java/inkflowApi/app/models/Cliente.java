@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data // Gera Getter, Setter, equals, hashCode e toString
+@Data
 public class Cliente {
-    public int Id;
-    public String Nome;
-    public String Telefone;
+    private int id;
+    private String nome;
+    private String telefone;
     private List<Agendamento> agendamentos = new ArrayList<>();
 
     }

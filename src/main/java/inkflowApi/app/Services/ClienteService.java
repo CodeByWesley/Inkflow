@@ -16,7 +16,10 @@ public class ClienteService {
 
     public void salvar(List<Cliente> clientes) {
         try {
-            mapper.writeValue(new File("./Dados/clientes.json"), clientes);
+            File file = new File("Dados/clientes.json");
+            file.mkdirs(); // cria a pasta se não existir
+            mapper.writeValue(file, clientes);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -25,21 +28,23 @@ public class ClienteService {
     public List<Cliente> carregar() {
         try {
             return mapper.readValue(
-                    new File("./Dados/clientes.json"),
+                    new File("Dados/clientes.json"),
                     new TypeReference<>() { }
-
             );
+
         } catch (Exception e) {
             return new ArrayList<>();
         }
     }
 
-    public void adicionarCliente(Cliente novoCliente) {
+    public List<Cliente> adicionarCliente(Cliente novoCliente) {
         List<Cliente> clientes = carregar();
 
         clientes.add(novoCliente);
 
         salvar(clientes);
+
+        return clientes;
     }
 
 
