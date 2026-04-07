@@ -13,7 +13,7 @@ public class Agendamento {
     private int id;
     private BigDecimal valor;
     private BigDecimal valorPago; // eventualmente usar sum(Pagamentos)
-    private LocalDateTime dataHora; // em sistemas maiores, um campo a mais pra hora pode ser melhor
+    private LocalDateTime dataHora;
     private Cliente cliente;
     private Servico servico;
     private StatusAgendamento statusAgendamento;

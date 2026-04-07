@@ -2,6 +2,8 @@ package inkflowApi.app.Helpers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +12,11 @@ import java.util.List;
 import java.util.function.Function;
 
 public class JsonHelper {
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper()
+            // Registra o módulo para entender LocalDateTime
+            .registerModule(new JavaTimeModule())
+            // Evita que a data vire um array de números [2026, 4, 6, ...]
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     public static <T> void criarJson(T dados, String path) {
         try {

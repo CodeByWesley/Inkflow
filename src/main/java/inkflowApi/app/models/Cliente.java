@@ -16,6 +16,6 @@ public class Cliente {
     private String email;
     private String senha;
     private Endereco endereco;
-    private List<Agendamento> agendamentos = new ArrayList<>();
+    private List<Agendamento> agendamentos = new ArrayList<>(); // pode ignorar por enquanto
 
     }
