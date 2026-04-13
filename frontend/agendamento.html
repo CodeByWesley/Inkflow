@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inkflow | Agendamento</title>
+    <link rel="stylesheet" href="../frontend/css/style.css">
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">INK<span>FLOW</span></div>
+            <ul>
+                <li><a href="index.html">Início</a></li>
+                <li><a href="agendamento.html">Agendar</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="booking-container">
+        <h2>Crie sua Conta</h2>
+        <form id="formCadastro">
+            <div class="input-group">
+                <label>Nome</label>
+                <input type="text" id="nome" required>
+            </div>
+
+            <div class="input-group">
+                <label for="telefone">Telefone</label>
+                <input type="text" id="telefone" value="(  ) " maxlength="15" required>
+            </div>
+
+            <div class="input-group">
+                <Label for="senha">Senha</Label>
+                <div class="password-wrapper">
+                    <input type="password" id="senha" maxlength="8" required>
+                    <span id="togglePassword" class="eye-icon">👁️</span>
+
+                    <span class="password-tooltip">
+                        A senha deve ter exatamente 8 dígitos, incluindo: 
+                        letras MAIÚSCULAS, minúsculas, números e um símbolo.
+                    </span>
+                </div>
+                <div id="senha-erro" class="error-message"></div>
+            </div>
+
+            <button type="submit" class="btn-main">Cadastrar</button>
+        </form>
+        
+        <div id="mensagem"></div>
+    </div>
+
+    <script src="../frontend/js/script.js"></script>
+
+</body>
+</html>
