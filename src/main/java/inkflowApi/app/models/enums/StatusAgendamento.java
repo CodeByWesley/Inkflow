@@ -1,4 +1,7 @@
 package inkflowApi.app.models.enums;
 
-public class StatusAgendamento {
+public enum StatusAgendamento {
+    PENDENTE,
+    CONFIRMADO,
+    CANCELADO
 }

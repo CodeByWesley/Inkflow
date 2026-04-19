@@ -2,6 +2,8 @@ package inkflowApi.app.Controllers;
 
 import inkflowApi.app.Services.ClienteService;
 import inkflowApi.app.models.Cliente;
+import inkflowApi.app.models.Dtos.ClienteDto;
+import inkflowApi.app.models.Dtos.ClienteInputDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +20,7 @@ public class ClientesController {
         return clienteService.carregar();
     }
     @PostMapping
-    public List<Cliente> salvar(@RequestBody Cliente cliente) {
+    public ClienteDto salvar(@RequestBody ClienteInputDto cliente) {
         return clienteService.adicionarCliente(cliente);
     }
     @PutMapping("/{id}")

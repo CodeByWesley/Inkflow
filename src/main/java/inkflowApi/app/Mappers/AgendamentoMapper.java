@@ -5,16 +5,28 @@ import inkflowApi.app.models.Cliente;
 import inkflowApi.app.models.Dtos.AgendamentoDto;
 import inkflowApi.app.models.Dtos.AgendamentoInputDto;
 import inkflowApi.app.models.Dtos.ClienteDto;
+import inkflowApi.app.models.Servico;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AgendamentoMapper {
+    private final ClienteMapper clienteMapper;
+    public AgendamentoMapper(ClienteMapper clienteMapper) {
+        this.clienteMapper = clienteMapper;
+    }
+
     public Agendamento toEntity(AgendamentoInputDto dto) {
         if (dto == null) return null;
 
         Agendamento entity = new Agendamento();
-        entity.setClienteId(dto.clienteId());
-        entity.setServicoId(dto.servicoId());
+        Cliente cliente = new Cliente();
+        cliente.setId(dto.clienteId());
+        entity.setCliente(cliente);
+
+        Servico servico = new Servico();
+        servico.setId(dto.servicoId());
+        entity.setServico(servico);
+
         entity.setDataHora(dto.dataHora());
         entity.setValor(dto.valor());
         entity.setValorPago(dto.valorPago());
@@ -26,22 +38,14 @@ public class AgendamentoMapper {
 
         return AgendamentoDto.builder()
                 .id(entity.getId())
-                .cliente(toClienteDto(entity.getCliente()))
+                .cliente(clienteMapper.toClienteDto(entity.getCliente()))
                 .servicoNome(entity.getServico() != null ? entity.getServico().getNome() : "Serviço não carregado")
                 .valor(entity.getValor())
                 .valorPago(entity.getValorPago())
                 .dataHora(entity.getDataHora())
                 .build();
     }
-    private ClienteDto toClienteDto(Cliente cliente) {
-        if (cliente == null) return null;
-        return ClienteDto.builder()
-                .id(cliente.getId())
-                .nome(cliente.getNome())
-                .email(cliente.getEmail())
-                .telefone(cliente.getTelefone())
-                .build();
-    }
+
 
 
         // Mapeando o objeto aninhado (Cliente -> ClienteResumoDto)

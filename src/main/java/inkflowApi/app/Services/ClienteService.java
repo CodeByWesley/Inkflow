@@ -1,43 +1,43 @@
 package inkflowApi.app.Services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import inkflowApi.app.Helpers.JsonHelper;
+import inkflowApi.app.Mappers.ClienteMapper;
+import inkflowApi.app.Repositories.ClienteRepository;
 import inkflowApi.app.models.Cliente;
-import inkflowApi.app.models.Servico;
+import inkflowApi.app.models.Dtos.ClienteDto;
+import inkflowApi.app.models.Dtos.ClienteInputDto;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ClienteService {
-    private static final ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    private ClienteRepository repository;
+    private final ClienteMapper mapper;
+
+    public ClienteService(ClienteMapper mapper) {
+        this.mapper = mapper;
+    }
 
     public Cliente getById(int id) {
-        List<Cliente> clientes = carregar();
-        return clientes.stream()
-                .filter(x -> x.getId() == id).findFirst()
-                .orElseThrow(() -> new RuntimeException("Cliente com ID " + id + " não encontrado"));
+        var cliente = repository.findById(id);
+        return cliente.orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
 
     }
 
     public List<Cliente> carregar() {
-        return JsonHelper.carregarJson(
-                "Dados/clientes.json",
-                 new TypeReference<List<Cliente>>() {});
+        return repository.findAll();
     }
 
-    public List<Cliente> adicionarCliente(Cliente novoCliente) {
-        List<Cliente> clientes = carregar();
+    public ClienteDto adicionarCliente(ClienteInputDto novoCliente) {
+        var entity = mapper.toEntity(novoCliente);
+        repository.save(entity);
+        return mapper.toClienteDto(entity);
 
-        clientes.add(novoCliente);
-
-        JsonHelper.criarJson(clientes, "Dados/clientes.json");
-
-        return clientes;
     }
     public List<Cliente> atualizarCliente(Cliente cliente) {
          return JsonHelper.atualizarJson(

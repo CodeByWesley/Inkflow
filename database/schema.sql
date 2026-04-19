@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
+ -- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
 --
 -- Host: localhost    Database: inkflow_db
 -- ------------------------------------------------------
@@ -138,4 +138,8 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 -- Teste de deploy
 -- Dump completed on 2026-04-15 20:34:42
+
+
+ ALTER TABLE CLIENTE
+     DROP COLUMN DATA_NASCIMENTO;
 
