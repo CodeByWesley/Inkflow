@@ -4,11 +4,15 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import inkflowApi.app.Helpers.JsonHelper;
 import inkflowApi.app.Mappers.AgendamentoMapper;
+import inkflowApi.app.Repositories.AgendamentoRepository;
 import inkflowApi.app.models.Agendamento;
 import inkflowApi.app.models.Cliente;
 import inkflowApi.app.models.Dtos.AgendamentoDto;
 import inkflowApi.app.models.Dtos.AgendamentoInputDto;
+import inkflowApi.app.models.Dtos.ClienteInputDto;
 import inkflowApi.app.models.Servico;
+import inkflowApi.app.models.enums.StatusAgendamento;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,57 +26,52 @@ public class AgendamentoService {
     private ClienteService clienteService;
     @Autowired
     private ServicoService servicoService;
+    @Autowired
+    private AgendamentoRepository repository;
 
     public AgendamentoService(AgendamentoMapper mapper) {
         this.mapper = mapper;
     }
 
-    public List<Agendamento> carregar() {
-        return JsonHelper.carregarJson(
-                "Dados/agendamentos.json",
-                new TypeReference<List<Agendamento>>() {});
-    }
-
-    public List<AgendamentoDto> adicionar(AgendamentoInputDto dto) {
-        List<Agendamento> agendamentos = carregar();
-
-        Agendamento ag = mapper.toEntity(dto);
-
-        int novoId = agendamentos.stream()
-                .mapToInt(Agendamento::getId) // Extrai todos os IDs
-                .max()                        // Pega o maior
-                .orElse(0) + 1;               // Se não houver nenhum, retorna 0 e soma 1
-
-        ag.setId(novoId);
-        Servico servico = servicoService.getById(dto.servicoId());
-        ag.setServico(servico);
-
-        Cliente cliente = clienteService.getById(dto.clienteId());
-        ag.setCliente(cliente);
-
-        agendamentos.add(ag);
-
-        JsonHelper.criarJson(agendamentos, "Dados/agendamentos.json");
-
-        return agendamentos.stream()             // Abre o "Select" (LINQ)
-                .map(mapper::toDto)              // Para cada entidade, chama o metodo toDto do mapper
+    public List<AgendamentoDto> carregar() {
+        var lista = repository.findAll();
+        return lista.stream()
+                .map(mapper::toDto)
                 .toList();
     }
-    public List<Agendamento> atualizar(Agendamento Agendamento) {
-        return JsonHelper.atualizarJson(
-                "Dados/agendamentos.json",
-                Agendamento,
-                c -> c.getId(), // Lambda dizendo que o ID vem de getId()
-                new TypeReference<List<Agendamento>>() {}
-        );
+    public Agendamento getEntityById(int id) {
+        var Agendamento = repository.findById(id);
+        return Agendamento.orElseThrow(() -> new EntityNotFoundException("Agendamento não encontrado"));
     }
-    public List<Agendamento> remover(int id) {
-        return JsonHelper.removerJson(
-                "Dados/agendamentos.json",
-                id,
-                c -> c.getId(),
-                new TypeReference<List<Agendamento>>() {}
-        );
+
+    public AgendamentoDto adicionar(AgendamentoInputDto dto) {
+        Cliente cliente = clienteService.getEntityById(dto.cliente_id());
+
+        Servico servico = servicoService.getById(dto.servico_id());
+
+        Agendamento ag = mapper.toEntity(dto, cliente, servico);
+        ag.setStatusAgendamento(StatusAgendamento.PENDENTE);
+
+        repository.save(ag);
+        return mapper.toDto(ag);
+    }
+    public AgendamentoDto atualizar(Integer id, AgendamentoInputDto ag) {
+        var entity = getEntityById(id);
+        Cliente cliente = clienteService.getEntityById(ag.cliente_id());
+        Servico servico = servicoService.getById(ag.servico_id());
+
+        entity.setValor(ag.valor());
+        entity.setValorPago(ag.valor_pago());
+        entity.setCliente(cliente);
+        entity.setServico(servico);
+        entity.setDataHora(ag.data_hora());
+        repository.save(entity);
+
+        return mapper.toDto(entity);
+    }
+    public boolean remover(int id) {
+        repository.deleteById(id);
+        return true;
     }
 
 

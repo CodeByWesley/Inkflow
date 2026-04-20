@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ public class Cliente {
     private String email;
     private String senha;
     @OneToMany(mappedBy = "cliente")
+    @ToString.Exclude
     private List<Agendamento> agendamentos;
 
     }

@@ -16,7 +16,7 @@ public class ClientesController {
     private ClienteService clienteService;
 
     @GetMapping
-    public List<Cliente> carregar() {
+    public List<ClienteDto> carregar() {
         return clienteService.carregar();
     }
     @PostMapping
@@ -24,11 +24,15 @@ public class ClientesController {
         return clienteService.adicionarCliente(cliente);
     }
     @PutMapping("/{id}")
-    public List<Cliente> atualizar(@RequestBody Cliente cliente, @PathVariable int id) {
-        return clienteService.atualizarCliente(cliente);
+    public ClienteDto atualizar(@RequestBody ClienteInputDto cliente, @PathVariable int id) {
+        return clienteService.atualizarCliente(id, cliente);
+    }
+    @GetMapping("/{id}")
+    public ClienteDto getById(@PathVariable int id) {
+        return clienteService.getDtoById(id);
     }
     @DeleteMapping("/{id}")
-    public List<Cliente> deletar(@PathVariable int id) {
+    public boolean deletar(@PathVariable int id) {
         return clienteService.removerCliente(id);
     }
 }

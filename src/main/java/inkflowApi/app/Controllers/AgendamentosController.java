@@ -16,19 +16,19 @@ public class AgendamentosController {
     private AgendamentoService _service;
 
     @GetMapping
-    public List<Agendamento> carregar() {
+    public List<AgendamentoDto> carregar() {
         return _service.carregar();
     }
     @PostMapping
-    public List<AgendamentoDto> salvar(@RequestBody AgendamentoInputDto Agendamento) {
+    public AgendamentoDto salvar(@RequestBody AgendamentoInputDto Agendamento) {
         return _service.adicionar(Agendamento);
     }
     @PutMapping("/{id}")
-    public List<Agendamento> atualizar(@RequestBody Agendamento Agendamento, @PathVariable int id) {
-        return _service.atualizar(Agendamento);
+    public AgendamentoDto atualizar(@RequestBody AgendamentoInputDto Agendamento, @PathVariable int id) {
+        return _service.atualizar(id, Agendamento);
     }
     @DeleteMapping("/{id}")
-    public List<Agendamento> deletar(@PathVariable int id) {
+    public boolean deletar(@PathVariable int id) {
         return _service.remover(id);
     }
 }

@@ -10,7 +10,7 @@ import inkflowApi.app.models.Dtos.ClienteInputDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.List;
 
 @Service
@@ -18,42 +18,53 @@ public class ClienteService {
     @Autowired
     private ClienteRepository repository;
     private final ClienteMapper mapper;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public ClienteService(ClienteMapper mapper) {
         this.mapper = mapper;
     }
 
-    public Cliente getById(int id) {
+    public Cliente getEntityById(int id) {
         var cliente = repository.findById(id);
         return cliente.orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
-
+    }
+    public ClienteDto getDtoById(int id) {
+        var cliente = getEntityById(id);
+        return mapper.toClienteDto(cliente);
     }
 
-    public List<Cliente> carregar() {
-        return repository.findAll();
+    public List<ClienteDto> carregar() {
+        var clientes = repository.findAll();
+        return clientes.stream()
+                .map(mapper::toClienteDto)
+                .toList();
+
     }
 
     public ClienteDto adicionarCliente(ClienteInputDto novoCliente) {
         var entity = mapper.toEntity(novoCliente);
+
+        String senhaCriptografada = passwordEncoder.encode(entity.getSenha());
+        entity.setSenha(senhaCriptografada);
+
         repository.save(entity);
         return mapper.toClienteDto(entity);
 
     }
-    public List<Cliente> atualizarCliente(Cliente cliente) {
-         return JsonHelper.atualizarJson(
-                "Dados/clientes.json",
-                cliente,
-                c -> c.getId(), // Lambda dizendo que o ID vem de getId()
-                new TypeReference<List<Cliente>>() {}
-        );
+    public ClienteDto atualizarCliente(Integer id, ClienteInputDto cliente) {
+
+        var entity = getEntityById(id);
+
+        entity.setNome(cliente.nome());
+        entity.setEmail(cliente.email());
+        entity.setTelefone(cliente.telefone());
+        repository.save(entity);
+
+        return mapper.toClienteDto(entity);
     }
-    public List<Cliente> removerCliente(int id) {
-        return JsonHelper.removerJson(
-                "Dados/clientes.json",
-                id,
-                c -> c.getId(),
-                new TypeReference<List<Cliente>>() {}
-        );
+    public boolean removerCliente(int id) {
+         repository.deleteById(id);
+         return true;
     }
 
 

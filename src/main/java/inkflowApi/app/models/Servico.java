@@ -13,5 +13,5 @@ public class Servico {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private int id;
     private String nome;
-    private BigDecimal valorBase;
+    private BigDecimal valor_base;
 }

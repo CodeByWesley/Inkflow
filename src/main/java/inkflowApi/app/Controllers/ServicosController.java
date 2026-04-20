@@ -20,7 +20,7 @@ public class ServicosController {
         return _service.carregar();
     }
     @PostMapping
-    public List<Servico> salvar(@RequestBody Servico servico) {
+    public Servico salvar(@RequestBody Servico servico) {
         return _service.adicionarServico(servico);
     }
     @PutMapping("/{id}")

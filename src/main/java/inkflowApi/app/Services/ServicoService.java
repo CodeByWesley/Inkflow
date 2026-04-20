@@ -3,7 +3,10 @@ package inkflowApi.app.Services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import inkflowApi.app.Helpers.JsonHelper;
+import inkflowApi.app.Repositories.ServicoRepository;
 import inkflowApi.app.models.Servico;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,14 +14,11 @@ import java.util.List;
 
 @Service
 public class ServicoService {
-
+@Autowired
+private ServicoRepository repository;
 
     public Servico getById(int id) {
-        List<Servico> servicos = carregar();
-        return servicos.stream()
-                .filter(x -> x.getId() == id).findFirst()
-                .orElseThrow(() -> new RuntimeException("Serviço com ID " + id + " não encontrado"));
-
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Servico não encontrado"));
     }
 
     public List<Servico> carregar() {
@@ -27,14 +27,13 @@ public class ServicoService {
                 new TypeReference<List<Servico>>() {});
     }
 
-    public List<Servico> adicionarServico(Servico novoServico) {
-        List<Servico> servicos = carregar();
+    public Servico adicionarServico(Servico novoServico) {
+        Servico entity = new Servico();
+        entity.setNome(novoServico.getNome());
+        entity.setValor_base(novoServico.getValor_base());
+        repository.save(entity);
 
-        servicos.add(novoServico);
-
-        JsonHelper.criarJson(servicos, "Dados/servicos.json");
-
-        return servicos;
+        return entity;
     }
     public List<Servico> atualizarServico(Servico cliente) {
         return JsonHelper.atualizarJson(

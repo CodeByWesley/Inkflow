@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @Builder
 public record AgendamentoInputDto(
         @NotNull BigDecimal valor,
-        @NotNull BigDecimal valorPago,
-        @Future LocalDateTime dataHora,
-        @NotNull int clienteId,
-        @NotNull int servicoId
+        @NotNull BigDecimal valor_pago,
+        @Future LocalDateTime data_hora,
+        @NotNull int cliente_id,
+        @NotNull int servico_id
 ) { }

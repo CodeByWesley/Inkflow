@@ -15,21 +15,16 @@ public class AgendamentoMapper {
         this.clienteMapper = clienteMapper;
     }
 
-    public Agendamento toEntity(AgendamentoInputDto dto) {
+    public Agendamento toEntity(AgendamentoInputDto dto, Cliente cliente, Servico servico) {
         if (dto == null) return null;
 
         Agendamento entity = new Agendamento();
-        Cliente cliente = new Cliente();
-        cliente.setId(dto.clienteId());
         entity.setCliente(cliente);
-
-        Servico servico = new Servico();
-        servico.setId(dto.servicoId());
         entity.setServico(servico);
 
-        entity.setDataHora(dto.dataHora());
+        entity.setDataHora(dto.data_hora());
         entity.setValor(dto.valor());
-        entity.setValorPago(dto.valorPago());
+        entity.setValorPago(dto.valor_pago());
         return entity;
     }
 
